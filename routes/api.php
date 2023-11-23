@@ -24,14 +24,20 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::group(['prefix'=>'auth'],function() {
     Route::post("/registration", RegisterController::class);
-    Route::post('/login', LoginController::class);
+    Route::post('/login', LoginController::class)->name('login');
 });
 
 Route::get('/me', MeController::class)->middleware('auth:sanctum');
 
-Route::resource('/rooms', RoomController::class)->middleware('auth:sanctum');
+//ROOMS
+Route::group(['prefix' => 'rooms', 'middleware' => 'auth:sanctum'], function() {
+    Route::post('{room}\step',[RoomController::class, 'createstep']);
+    Route::resource('/',RoomController::class);
+    Route::post('/enter/{room}',[RoomController::class,'enter']);
+    Route::post('/leave/{room}',[RoomController::class, 'leave']);
+});
 
-Route::get('/list',[RoomController::class, 'index'])->middleware('auth:sanctum');
+Route::get('/me',MeController::class)->middleware('auth:sanctum');
 
 
 
